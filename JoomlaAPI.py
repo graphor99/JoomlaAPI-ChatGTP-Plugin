@@ -19,13 +19,13 @@ class JoomlaAPI:
             alias = title.replace(" ", "-").lower()
 
         data = {
-            "alias": "test44",
-            "articletext": "My text ",
-            "catid": 13,
+            "alias": alias,
+            "articletext": content,
+            "catid": category_id,
             "language": "*",
             "metadesc": "",
             "metakey": "",
-            "title": "Here's an article99"
+            "title": title
         }
 
         response = requests.post(endpoint, headers=self.headers, json=data)
