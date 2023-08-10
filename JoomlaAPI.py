@@ -1,5 +1,6 @@
 
 import requests
+import random
 
 class JoomlaAPI:
     def __init__(self, auth_apikey, base_url, base_path="/api/index.php/v1"):
@@ -11,7 +12,7 @@ class JoomlaAPI:
             "X-Joomla-Token": self.auth_apikey
         }
 
-    def create_article(self, title, content, category_id=2, alias=None):
+    def create_article(self, title, content, category_id=2, alias=None, language="en-GB", metakey="", metadesc=""):
         endpoint = f"{self.base_url}{self.base_path}/content/articles"
         
         # If no alias is provided, use the title but replace spaces with hyphens
@@ -22,15 +23,15 @@ class JoomlaAPI:
             "alias": alias,
             "articletext": content,
             "catid": category_id,
-            "language": "*",
-            "metadesc": "",
-            "metakey": "",
+            "language": language,
+            "metadesc": metadesc,
+            "metakey": metakey,
             "title": title
         }
 
         response = requests.post(endpoint, headers=self.headers, json=data)
         return response.json()
-    
+
     # Category management methods
     def create_category(self, title, alias=None, parent_id=1):
         endpoint = f"{self.base_url}{self.base_path}/content/categories"
@@ -74,3 +75,27 @@ class JoomlaAPI:
         response = requests.get(endpoint, headers=self.headers)
         return response.json()
 
+    # Article management methods
+    def get_article(self, article_id):
+        endpoint = f"{self.base_url}{self.base_path}/content/articles/{article_id}"
+        response = requests.get(endpoint, headers=self.headers)
+        return response.json()
+
+    def update_article(self, article_id, updated_data):
+        endpoint = f"{self.base_url}{self.base_path}/content/articles/{article_id}"
+        response = requests.patch(endpoint, headers=self.headers, json=updated_data)
+        return response.json()
+
+    def delete_article(self, article_id):
+        endpoint = f"{self.base_url}{self.base_path}/content/articles/{article_id}"
+        response = requests.delete(endpoint, headers=self.headers)
+        return response.json()
+
+    def list_articles(self, filters=None):
+        endpoint = f"{self.base_url}{self.base_path}/content/articles"
+        if filters:
+            params = filters
+            response = requests.get(endpoint, headers=self.headers, params=params)
+        else:
+            response = requests.get(endpoint, headers=self.headers)
+        return response.json()
